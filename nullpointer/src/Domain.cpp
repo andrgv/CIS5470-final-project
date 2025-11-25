@@ -13,52 +13,6 @@ Domain::Domain(Element V) {
   Value = V;
 }
 
-Domain *Domain::add(Domain *E1, Domain *E2) {
-  if (E1->Value == Uninit || E2->Value == Uninit)
-    return new Domain(Uninit);
-  if (E1->Value == Zero && E2->Value == Zero)
-    return new Domain(Zero);
-  if (E1->Value == Zero && E2->Value == NonZero)
-    return new Domain(NonZero);
-  if (E1->Value == NonZero && E2->Value == Zero)
-    return new Domain(NonZero);
-  return new Domain(MaybeZero);
-}
-
-Domain *Domain::sub(Domain *E1, Domain *E2) {
-  if (E1->Value == Uninit || E2->Value == Uninit)
-    return new Domain(Uninit);
-  if (E1->Value == Zero && E2->Value == Zero)
-    return new Domain(Zero);
-  if (E1->Value == Zero && E2->Value == NonZero)
-    return new Domain(NonZero);
-  if (E1->Value == NonZero && E2->Value == Zero)
-    return new Domain(NonZero);
-  return new Domain(MaybeZero);
-}
-
-Domain *Domain::mul(Domain *E1, Domain *E2) {
-  if (E1->Value == Uninit || E2->Value == Uninit)
-    return new Domain(Uninit);
-  if (E1->Value == Zero || E2->Value == Zero)
-    return new Domain(Zero);
-  if (E1->Value == NonZero && E2->Value == NonZero)
-    return new Domain(NonZero);
-  return new Domain(MaybeZero);
-}
-
-Domain *Domain::div(Domain *E1, Domain *E2) {
-  if (E1->Value == Uninit || E2->Value == Uninit)
-    return new Domain(Uninit);
-  if (E2->Value == Zero || E2->Value == MaybeZero)
-    return new Domain(Uninit);
-  if (E1->Value == NonZero)
-    return new Domain(MaybeZero);
-  if (E1->Value == Zero)
-    return new Domain(Zero);
-  return new Domain(MaybeZero);
-}
-
 Domain *Domain::join(Domain *E1, Domain *E2) {
   if (E1->Value == Uninit) return new Domain(*E2);
   if (E2->Value == Uninit) return new Domain(*E1);
@@ -69,10 +23,10 @@ Domain *Domain::join(Domain *E1, Domain *E2) {
   if (E1->Value == Null && E2->Value == Null)
     return new Domain(Null);
 
-  if (E1->Value == NotNull && E2->Value == NotNull)
-    return new Domain(NotNull);
+  if (E1->Value == NonNull && E2->Value == NonNull)
+    return new Domain(NonNull);
 
-  // One is Null, the other is NotNull
+  // One is Null, the other is NonNull
   return new Domain(MaybeNull);
 }
 

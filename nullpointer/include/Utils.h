@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "DivZeroAnalysis.h"
+#include "NullPointerAnalysis.h"
 
 extern const char *WHITESPACES;
 

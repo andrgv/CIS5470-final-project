@@ -1,6 +1,7 @@
 #include "NullPointerAnalysis.h"
 
 #include "Utils.h"
+#include <iostream>
 
 namespace dataflow {
 
@@ -53,7 +54,7 @@ bool NullPointerAnalysis::check(Instruction *Inst) {
           Domain::equal(*PtrDomain, Domain::MaybeNull));
 }
 
-PreservedAnalyses DivZeroAnalysis::run(Function &F, FunctionAnalysisManager &) {
+PreservedAnalyses NullPointerAnalysis::run(Function &F, FunctionAnalysisManager &) {
   outs() << "Running " << getAnalysisName() << " on " << F.getName() << "\n";
 
   // Initializing InMap and OutMap.
@@ -66,7 +67,7 @@ PreservedAnalyses DivZeroAnalysis::run(Function &F, FunctionAnalysisManager &) {
   // The chaotic iteration algorithm is implemented inside doAnalysis().
   doAnalysis(F);
 
-  // Check each instruction in function F for potential divide-by-zero error.
+  // Check each instruction in function F for potential null pointer dereference error.
   for (inst_iterator Iter = inst_begin(F), End = inst_end(F); Iter != End; ++Iter) {
     auto Inst = &(*Iter);
     if (check(Inst))
@@ -87,13 +88,13 @@ PreservedAnalyses DivZeroAnalysis::run(Function &F, FunctionAnalysisManager &) {
 }
 
 extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo llvmGetPassPluginInfo() {
-  return {LLVM_PLUGIN_API_VERSION, "DivZero", "v0.1", [](PassBuilder &PB) {
+  return {LLVM_PLUGIN_API_VERSION, "NullPtr", "v0.1", [](PassBuilder &PB) {
             PB.registerPipelineParsingCallback(
                 [](StringRef Name,
                     ModulePassManager &MPM,
                     ArrayRef<PassBuilder::PipelineElement>) {
-                  if (Name == "DivZero") {
-                    MPM.addPass(createModuleToFunctionPassAdaptor(DivZeroAnalysis()));
+                  if (Name == "NullPtr") {
+                    MPM.addPass(createModuleToFunctionPassAdaptor(NullPointerAnalysis()));
                     return true;
                   }
                   return false;

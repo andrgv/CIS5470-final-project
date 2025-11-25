@@ -94,76 +94,75 @@ Domain *eval(CastInst *Cast, const Memory *InMem) {
  * @param InMem InMemory of Cmp
  * @return Domain of Cmp
  */
-Domain *eval(CmpInst *Cmp, const Memory *InMem) {
-  /**
-   * TODO: Write your code here that evaluates:
-   * ==, !=, <, <=, >=, and > based on the Domains of the operands.
-   *
-   * NOTE: There is a lot of scope for refining this, but you can just return
-   * MaybeZero for comparisons other than equality.
-   */
-  Value *LHS = Cmp->getOperand(0);
-  Value *RHS = Cmp->getOperand(1);
+// Domain *eval(CmpInst *Cmp, const Memory *InMem) {
+//   /**
+//    * TODO: Write your code here that evaluates:
+//    * ==, !=, <, <=, >=, and > based on the Domains of the operands.
+//    *
+//    * NOTE: There is a lot of scope for refining this, but you can just return
+//    * MaybeZero for comparisons other than equality.
+//    */
+//   Value *LHS = Cmp->getOperand(0);
+//   Value *RHS = Cmp->getOperand(1);
 
-  Domain *Left = getOrExtract(InMem, LHS);
-  Domain *Right = getOrExtract(InMem, RHS);
+//   Domain *Left = getOrExtract(InMem, LHS);
+//   Domain *Right = getOrExtract(InMem, RHS);
 
-  auto Pred = Cmp->getPredicate();
+//   auto Pred = Cmp->getPredicate();
 
-  if (Pred == CmpInst::ICMP_EQ) {
-    // Equal (true)
-    if (Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::Zero)) {
-      return new Domain(Domain::NonZero);
-    }
+//   if (Pred == CmpInst::ICMP_EQ) {
+//     // Equal (true)
+//     if (Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::Zero)) {
+//       return new Domain(Domain::NonZero);
+//     }
 
-    // Not equal (false)
-    if ((Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::NonZero)) ||
-        (Domain::equal(*Left, Domain::NonZero) && Domain::equal(*Right, Domain::Zero))) {
-      return new Domain(Domain::Zero);
-    }
+//     // Not equal (false)
+//     if ((Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::NonZero)) ||
+//         (Domain::equal(*Left, Domain::NonZero) && Domain::equal(*Right, Domain::Zero))) {
+//       return new Domain(Domain::Zero);
+//     }
 
-    return new Domain(Domain::MaybeZero);
+//     return new Domain(Domain::MaybeZero);
 
-  } else if (Pred == CmpInst::ICMP_NE) {
-    // Equal (false)
-    if (Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::Zero)) {
-      return new Domain(Domain::Zero);
-    }
+//   } else if (Pred == CmpInst::ICMP_NE) {
+//     // Equal (false)
+//     if (Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::Zero)) {
+//       return new Domain(Domain::Zero);
+//     }
 
-    // Not equal (true)
-    if ((Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::NonZero)) ||
-        (Domain::equal(*Left, Domain::NonZero) && Domain::equal(*Right, Domain::Zero))) {
-      return new Domain(Domain::NonZero);
-    }
+//     // Not equal (true)
+//     if ((Domain::equal(*Left, Domain::Zero) && Domain::equal(*Right, Domain::NonZero)) ||
+//         (Domain::equal(*Left, Domain::NonZero) && Domain::equal(*Right, Domain::Zero))) {
+//       return new Domain(Domain::NonZero);
+//     }
 
-    return new Domain(Domain::MaybeZero);
-  }
+//     return new Domain(Domain::MaybeZero);
+//   }
   
-  return new Domain(Domain::MaybeZero); // Other comparisons (e.g., <, <=, >, >=)
-}
+//   return new Domain(Domain::MaybeZero); // Other comparisons (e.g., <, <=, >, >=)
+// }
 
-void NullPointerAnalysi::transfer(Instruction *Inst, const Memory *In, Memory &NOut) {
-  if (isInput(Inst)) {
-    // The instruction is a user controlled input, it can have any value.
-    NOut[variable(Inst)] = new Domain(Domain::MaybeZero);
-  } else if (auto Phi = dyn_cast<PHINode>(Inst)) {
+void NullPointerAnalysis::transfer(Instruction *Inst, const Memory *In, Memory &NOut) {
+  if (auto Phi = dyn_cast<PHINode>(Inst)) {
     // Evaluate PHI node
     NOut[variable(Phi)] = eval(Phi, In);
   } else if (auto BinOp = dyn_cast<BinaryOperator>(Inst)) {
     // Evaluate BinaryOperator
-    NOut[variable(BinOp)] = eval(BinOp, In);
+    // NOut[variable(BinOp)] = eval(BinOp, In);
   } else if (auto Cast = dyn_cast<CastInst>(Inst)) {
     // Evaluate Cast instruction
     NOut[variable(Cast)] = eval(Cast, In);
   } else if (auto Cmp = dyn_cast<CmpInst>(Inst)) {
     // Evaluate Comparision instruction
-    NOut[variable(Cmp)] = eval(Cmp, In);
+    // NOut[variable(Cmp)] = eval(Cmp, In);
   } else if (auto Alloca = dyn_cast<AllocaInst>(Inst)) {
-    NOut[variable(Alloca)] = new Domain(Domain::NotNull);
+    NOut[variable(Alloca)] = new Domain(Domain::NonNull);
   } else if (auto Store = dyn_cast<StoreInst>(Inst)) {
     // Used for the next lab, do nothing here.
   } else if (auto Load = dyn_cast<LoadInst>(Inst)) {
-    // Used for the next lab, do nothing here.
+    Value *Ptr = Load->getPointerOperand();
+    Domain *PtrDom = getOrExtract(In, Ptr);
+    NOut[variable(Load)] = new Domain(Domain::Uninit);
   } else if (auto Branch = dyn_cast<BranchInst>(Inst)) {
     // Analysis is flow-insensitive, so do nothing here.
   } else if (auto Call = dyn_cast<CallInst>(Inst)) {
@@ -175,37 +174,37 @@ void NullPointerAnalysi::transfer(Instruction *Inst, const Memory *In, Memory &N
   }
 }
 
-void OverflowAnalysis::transfer(Instruction *Inst, const Memory *In, Memory &NOut) {
-  if (isInput(Inst)) {
-    // The instruction is a user controlled input, it can have any value.
-    NOut[variable(Inst)] = new Domain(Domain::MaybeZero);
-  } else if (auto Phi = dyn_cast<PHINode>(Inst)) {
-    // Evaluate PHI node
-    NOut[variable(Phi)] = eval(Phi, In);
-  } else if (auto BinOp = dyn_cast<BinaryOperator>(Inst)) {
-    // Evaluate BinaryOperator
-    NOut[variable(BinOp)] = eval(BinOp, In);
-  } else if (auto Cast = dyn_cast<CastInst>(Inst)) {
-    // Evaluate Cast instruction
-    NOut[variable(Cast)] = eval(Cast, In);
-  } else if (auto Cmp = dyn_cast<CmpInst>(Inst)) {
-    // Evaluate Comparision instruction
-    NOut[variable(Cmp)] = eval(Cmp, In);
-  } else if (auto Alloca = dyn_cast<AllocaInst>(Inst)) {
-    NOut[variable(Alloca)] = new Domain(Domain::NotNull);
-  } else if (auto Store = dyn_cast<StoreInst>(Inst)) {
-    // Used for the next lab, do nothing here.
-  } else if (auto Load = dyn_cast<LoadInst>(Inst)) {
-    // Used for the next lab, do nothing here.
-  } else if (auto Branch = dyn_cast<BranchInst>(Inst)) {
-    // Analysis is flow-insensitive, so do nothing here.
-  } else if (auto Call = dyn_cast<CallInst>(Inst)) {
-    // Analysis is intra-procedural, so do nothing here.
-  } else if (auto Return = dyn_cast<ReturnInst>(Inst)) {
-    // Analysis is intra-procedural, so do nothing here.
-  } else {
-    errs() << "Unhandled instruction: " << *Inst << "\n";
-  }
-}
+// void OverflowAnalysis::transfer(Instruction *Inst, const Memory *In, Memory &NOut) {
+//   if (isInput(Inst)) {
+//     // The instruction is a user controlled input, it can have any value.
+//     NOut[variable(Inst)] = new Domain(Domain::MaybeZero);
+//   } else if (auto Phi = dyn_cast<PHINode>(Inst)) {
+//     // Evaluate PHI node
+//     NOut[variable(Phi)] = eval(Phi, In);
+//   } else if (auto BinOp = dyn_cast<BinaryOperator>(Inst)) {
+//     // Evaluate BinaryOperator
+//     NOut[variable(BinOp)] = eval(BinOp, In);
+//   } else if (auto Cast = dyn_cast<CastInst>(Inst)) {
+//     // Evaluate Cast instruction
+//     NOut[variable(Cast)] = eval(Cast, In);
+//   } else if (auto Cmp = dyn_cast<CmpInst>(Inst)) {
+//     // Evaluate Comparision instruction
+//     NOut[variable(Cmp)] = eval(Cmp, In);
+//   } else if (auto Alloca = dyn_cast<AllocaInst>(Inst)) {
+//     NOut[variable(Alloca)] = new Domain(Domain::NotNull);
+//   } else if (auto Store = dyn_cast<StoreInst>(Inst)) {
+//     // Used for the next lab, do nothing here.
+//   } else if (auto Load = dyn_cast<LoadInst>(Inst)) {
+//     // Used for the next lab, do nothing here.
+//   } else if (auto Branch = dyn_cast<BranchInst>(Inst)) {
+//     // Analysis is flow-insensitive, so do nothing here.
+//   } else if (auto Call = dyn_cast<CallInst>(Inst)) {
+//     // Analysis is intra-procedural, so do nothing here.
+//   } else if (auto Return = dyn_cast<ReturnInst>(Inst)) {
+//     // Analysis is intra-procedural, so do nothing here.
+//   } else {
+//     errs() << "Unhandled instruction: " << *Inst << "\n";
+//   }
+// }
 
 }  // namespace dataflow

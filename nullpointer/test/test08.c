@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 int f(int* p) {
     if (p == NULL) {
         return 0;

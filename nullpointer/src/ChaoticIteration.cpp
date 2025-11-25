@@ -1,4 +1,4 @@
-#include "DivZeroAnalysis.h"
+#include "NullPointerAnalysis.h"
 #include "Utils.h"
 
 namespace dataflow {
@@ -98,7 +98,7 @@ Memory *join(Memory *Mem1, Memory *Mem2) {
   return Result;
 }
 
-void DivZeroAnalysis::flowIn(Instruction *Inst, Memory *InMem) {
+void NullPointerAnalysis::flowIn(Instruction *Inst, Memory *InMem) {
   /**
    * TODO: Write your code to implement flowIn.
    *
@@ -174,7 +174,7 @@ bool equal(Memory *Mem1, Memory *Mem2) {
   return true;
 }
 
-void DivZeroAnalysis::flowOut(
+void NullPointerAnalysis::flowOut(
     Instruction *Inst, Memory *Pre, Memory *Post, SetVector<Instruction *> &WorkSet) {
   /**
    * TODO: Write your code to implement flowOut.
@@ -192,7 +192,7 @@ void DivZeroAnalysis::flowOut(
 
 }
 
-void DivZeroAnalysis::doAnalysis(Function &F) {
+void NullPointerAnalysis::doAnalysis(Function &F) {
   SetVector<Instruction *> WorkSet;
   /**
    * TODO: Write your code to implement the chaotic iteration algorithm
@@ -233,7 +233,7 @@ void DivZeroAnalysis::doAnalysis(Function &F) {
       (*Out)[key] = new Domain(*val);
     }
 
-    DivZeroAnalysis::transfer(Inst, InMem, *Out);
+    NullPointerAnalysis::transfer(Inst, InMem, *Out);
     // printInstructionTransfer(Inst, InMem, Out);
     flowOut(Inst, OutMap[Inst], Out, WorkSet);
 
