@@ -9,24 +9,22 @@ namespace dataflow {
 //===----------------------------------------------------------------------===//
 
 bool OverflowAnalysis::check(Instruction *Inst) {
-  // Only checking for integer ops
+  // Only checking for integer ops that can overflow
   if (!(isa<BinaryOperator>(Inst) &&
         (Inst->getOpcode() == Instruction::Add ||
          Inst->getOpcode() == Instruction::Sub ||
          Inst->getOpcode() == Instruction::Mul ||
-         Inst->getOpcode() == Instruction::Shl ||
-        )
-    )) {
+         Inst->getOpcode() == Instruction::Shl))) {
     return false;
   }
 
-  Value *Divisor = Inst->getOperand(1);
-  Domain *DivisorDomain = getOrExtract(InMap[Inst], Divisor);
+  Memory *OutMem = OutMap[Inst];
+  Domain *ResDomain = getOrExtract(OutMem, Inst);
 
-  return (Domain::equal(*DivisorDomain, Domain::Zero) || Domain::equal(*DivisorDomain, Domain::MaybeZero));
+  return (Domain::equal(*ResDomain, Domain::Overflow) || Domain::equal(*ResDomain, Domain::MaybeOverflow));
 }
 
-PreservedAnalyses DivZeroAnalysis::run(Function &F, FunctionAnalysisManager &) {
+PreservedAnalyses OverflowAnalysis::run(Function &F, FunctionAnalysisManager &) {
   outs() << "Running " << getAnalysisName() << " on " << F.getName() << "\n";
 
   // Initializing InMap and OutMap.
@@ -39,7 +37,7 @@ PreservedAnalyses DivZeroAnalysis::run(Function &F, FunctionAnalysisManager &) {
   // The chaotic iteration algorithm is implemented inside doAnalysis().
   doAnalysis(F);
 
-  // Check each instruction in function F for potential divide-by-zero error.
+  // Check each instruction in function F for potential overflow error.
   for (inst_iterator Iter = inst_begin(F), End = inst_end(F); Iter != End; ++Iter) {
     auto Inst = &(*Iter);
     if (check(Inst))
@@ -47,7 +45,7 @@ PreservedAnalyses DivZeroAnalysis::run(Function &F, FunctionAnalysisManager &) {
   }
 
   printMap(F, InMap, OutMap);
-  outs() << "Potential Instructions by " << getAnalysisName() << ": \n";
+  outs() << "Potential Overflow Instructions by " << getAnalysisName() << ": \n";
   for (auto Inst : ErrorInsts) {
     outs() << *Inst << "\n";
   }
@@ -60,13 +58,13 @@ PreservedAnalyses DivZeroAnalysis::run(Function &F, FunctionAnalysisManager &) {
 }
 
 extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo llvmGetPassPluginInfo() {
-  return {LLVM_PLUGIN_API_VERSION, "DivZero", "v0.1", [](PassBuilder &PB) {
+  return {LLVM_PLUGIN_API_VERSION, "Overflow", "v0.1", [](PassBuilder &PB) {
             PB.registerPipelineParsingCallback(
                 [](StringRef Name,
                     ModulePassManager &MPM,
                     ArrayRef<PassBuilder::PipelineElement>) {
-                  if (Name == "DivZero") {
-                    MPM.addPass(createModuleToFunctionPassAdaptor(DivZeroAnalysis()));
+                  if (Name == "Overflow") {
+                    MPM.addPass(createModuleToFunctionPassAdaptor(OverflowAnalysis()));
                     return true;
                   }
                   return false;

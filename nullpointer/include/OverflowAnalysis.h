@@ -22,7 +22,7 @@ namespace dataflow {
 
 using Memory = std::map<std::string, Domain *>;
 
-struct OverflowAnalysis : public llvm::PassInfoMixin<DivZeroAnalysis> {
+struct OverflowAnalysis : public llvm::PassInfoMixin<OverflowAnalysis> {
   std::map<llvm::Instruction *, Memory *> InMap;
   std::map<llvm::Instruction *, Memory *> OutMap;
   llvm::SetVector<llvm::Instruction *> ErrorInsts;
@@ -84,4 +84,4 @@ struct OverflowAnalysis : public llvm::PassInfoMixin<DivZeroAnalysis> {
 };
 }  // namespace dataflow
 
-#endif  // DIV_ZERO_ANALYSIS_H
+#endif  // OVERFLOW_ANALYSIS_H

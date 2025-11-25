@@ -1,5 +1,5 @@
-#ifndef NULL_POINTER_ANALYSIS_H
-#define NULL_POINTER_ANALYSIS_H
+#ifndef DIV_ZERO_ANALYSIS_H
+#define DIV_ZERO_ANALYSIS_H
 
 #include "Domain.h"
 #include "llvm/ADT/SetVector.h"
@@ -22,7 +22,7 @@ namespace dataflow {
 
 using Memory = std::map<std::string, Domain *>;
 
-struct NullPointerAnalysis : public llvm::PassInfoMixin<NullPointerAnalysis> {
+struct DivZeroAnalysis : public llvm::PassInfoMixin<DivZeroAnalysis> {
   std::map<llvm::Instruction *, Memory *> InMap;
   std::map<llvm::Instruction *, Memory *> OutMap;
   llvm::SetVector<llvm::Instruction *> ErrorInsts;
@@ -71,17 +71,17 @@ struct NullPointerAnalysis : public llvm::PassInfoMixin<NullPointerAnalysis> {
       Instruction *Inst, Memory *Pre, Memory *Post, SetVector<Instruction *> &WorkSet);
 
   /**
-   * Can the Instruction Inst incurr a null pointer dereference error?
+   * Can the Instruction Inst incurr a divide by zero error?
    *
    * @param Inst Instruction to check.
-   * @return true if the instruction can incur a null pointer dereference error.
+   * @return true if the instruction can incur a divide by zero error.
    */
   bool check(Instruction *Inst);
 
   std::string getAnalysisName() {
-    return "NullPointer";
+    return "DivZero";
   }
 };
 }  // namespace dataflow
 
-#endif  // NULL_POINTER_ANALYSIS_H
+#endif  // DIV_ZERO_ANALYSIS_H
