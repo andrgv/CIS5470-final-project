@@ -31,6 +31,7 @@ if (USE_REFERENCE)
 
 else (USE_REFERENCE)
   add_llvm_library(NullPtrPass MODULE # for creating libHiddenAnalysis.a: 1) change MODULE to OBJECT; 2) change DivZeroPass to HiddenAnalysis.
+  src/PointerAnalysis.cpp
   src/Transfer.cpp
   src/ChaoticIteration.cpp
   src/Domain.cpp

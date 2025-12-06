@@ -90,4 +90,14 @@ void printMap(Function &F,
   }
 }
 
+std::string address(const Value *Val) {
+  std::string Code;
+  raw_string_ostream SS(Code);
+  Val->print(SS);
+  Code.erase(0, Code.find_first_not_of(WHITESPACES));
+  Code = "@(" + Code + ")";
+  return Code;
+}
+
+
 }  // namespace dataflow

@@ -192,8 +192,9 @@ void NullPointerAnalysis::flowOut(
 
 }
 
-void NullPointerAnalysis::doAnalysis(Function &F) {
+void NullPointerAnalysis::doAnalysis(Function &F, PointerAnalysis *PA) {
   SetVector<Instruction *> WorkSet;
+  SetVector<Value *> PointerSet;
   /**
    * TODO: Write your code to implement the chaotic iteration algorithm
    * for the analysis.
@@ -208,6 +209,34 @@ void NullPointerAnalysis::doAnalysis(Function &F) {
    *   memory, to check if there is a difference between the two to update the
    *   OutMap and add all successors to WorkSet.
    */
+
+  // Initialize PointerSet with all pointer-type values
+  for (Instruction &I : instructions(F)) {
+    if (I.getType()->isPointerTy()) {
+     PointerSet.insert(&I);
+   }
+    // Also include operands that are pointers
+    for (Use &U : I.operands()) {
+      if (U->getType()->isPointerTy()) {
+        PointerSet.insert(U.get());
+     }
+    }
+  }
+
+  // Create initial memory for entry instruction
+  Memory *EntryMem = new Memory();
+  for (Argument &Arg : F.args()) {
+    std::string Var = variable(&Arg);
+    if (Arg.getType()->isIntegerTy()) {
+      (*EntryMem)[Var] = new Domain(Domain::MaybeNull);
+    } else if (Arg.getType()->isPointerTy()) {
+      PointerSet.insert(&Arg);
+    }
+  }
+
+  // Associate this memory with the first instruction of the entry block
+  Instruction *FirstInst = &*F.getEntryBlock().begin();
+  InMap[FirstInst] = EntryMem;
 
   // Initialize workset
   for (Instruction &I : instructions(F)) {
@@ -233,7 +262,7 @@ void NullPointerAnalysis::doAnalysis(Function &F) {
       (*Out)[key] = new Domain(*val);
     }
 
-    NullPointerAnalysis::transfer(Inst, InMem, *Out);
+    NullPointerAnalysis::transfer(Inst, InMem, *Out, PA, PointerSet);
     // printInstructionTransfer(Inst, InMem, Out);
     flowOut(Inst, OutMap[Inst], Out, WorkSet);
 

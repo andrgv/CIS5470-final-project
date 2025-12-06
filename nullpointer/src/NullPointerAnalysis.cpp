@@ -46,6 +46,11 @@ bool NullPointerAnalysis::check(Instruction *Inst) {
 
   if (!Ptr) return false;
 
+  // Pointers to stack are safe
+  if (isa<AllocaInst>(Ptr->stripPointerCasts())) {
+      return false;
+  }
+
   // Retrieve the domain of the pointer
   Domain *PtrDomain = getOrExtract(InMap[Inst], Ptr);
 
@@ -65,7 +70,8 @@ PreservedAnalyses NullPointerAnalysis::run(Function &F, FunctionAnalysisManager 
   }
 
   // The chaotic iteration algorithm is implemented inside doAnalysis().
-  doAnalysis(F);
+  auto PA = new PointerAnalysis(F);
+  doAnalysis(F, PA);
 
   // Check each instruction in function F for potential null pointer dereference error.
   for (inst_iterator Iter = inst_begin(F), End = inst_end(F); Iter != End; ++Iter) {

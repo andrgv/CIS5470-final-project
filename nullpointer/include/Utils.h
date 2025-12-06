@@ -16,6 +16,14 @@ namespace dataflow {
 std::string variable(const Value *Val);
 
 /**
+ * @brief Encode the memory address of an llvm Value
+ *
+ * @param Val The llvm Value to get the encoding of
+ * @return std::string The encoded memory address of Val
+ */
+std::string address(const Value *Val);
+
+/**
  * @brief Try to extract the Domain of a value.
  *
  * When Val is a ConstantInt, we can extract its Domain.
