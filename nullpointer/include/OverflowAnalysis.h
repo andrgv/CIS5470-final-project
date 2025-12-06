@@ -1,7 +1,8 @@
 #ifndef OVERFLOW_ANALYSIS_H
 #define OVERFLOW_ANALYSIS_H
 
-#include "Domain.h"
+#include "DomainOverflow.h"
+
 #include "llvm/ADT/SetVector.h"
 #include "llvm/IR/CFG.h"
 #include "llvm/IR/Function.h"
@@ -20,68 +21,44 @@
 
 namespace dataflow {
 
-using Memory = std::map<std::string, Domain *>;
+// Interval analysis memory: map variable name -> interval (DomainOverflow)
+using OverflowMemory = std::map<std::string, overflow::DomainOverflow>;
 
 struct OverflowAnalysis : public llvm::PassInfoMixin<OverflowAnalysis> {
-  std::map<llvm::Instruction *, Memory *> InMap;
-  std::map<llvm::Instruction *, Memory *> OutMap;
+  // Dataflow state: IN and OUT memory per instruction
+  std::map<llvm::Instruction *, OverflowMemory *> InMap;
+  std::map<llvm::Instruction *, OverflowMemory *> OutMap;
+
+  // Instructions that may overflow
   llvm::SetVector<llvm::Instruction *> ErrorInsts;
 
-  /**
-   * This function is called for each function F in the input C program
-   * that the compiler encounters during a pass.
-   * You do not need to modify this function.
-   */
-  llvm::PreservedAnalyses run(llvm::Function &F, llvm::FunctionAnalysisManager &);
+  llvm::PreservedAnalyses run(llvm::Function &F,
+                              llvm::FunctionAnalysisManager &);
 
- protected:
-  /**
-   * This function creates a transfer function that updates the Out Memory based
-   * on In Memory and the instruction type/parameters.
-   */
-  void transfer(Instruction *I, const Memory *In, Memory &NOut);
+protected:
+  // Transfer function: In -> NOut for a single instruction
+  void transfer(llvm::Instruction *I,
+                const OverflowMemory *In,
+                OverflowMemory &NOut);
 
-  /**
-   * @brief This function implements the chaotic iteration algorithm using
-   * flowIn(), transfer(), and flowOut().
-   *
-   * @param F The function to be analyzed.
-   */
-  void doAnalysis(Function &F);
+  // Chaotic iteration driver
+  void doAnalysis(llvm::Function &F);
 
-  /**
-   * @brief Flow the abstract domains from all predecessors of Inst into the In
-   * Memory object for Inst.
-   *
-   * @param Inst Instruction to flow In Memory for.
-   * @param InMem InMemory object of Inst to populate.
-   */
-  void flowIn(Instruction *Inst, Memory *InMem);
+  // Flow IN: join predecessors' OUT into InMem
+  void flowIn(llvm::Instruction *Inst, OverflowMemory *InMem);
 
-  /**
-   * @brief Merge the previous Out Memory of Inst with the current Out Memory
-   * for each instruction to update the OutMap and WorkSet as needed.
-   *
-   * @param Inst Instruction to flow Out Memory for.
-   * @param Pre Previous OutMemory of Inst.
-   * @param Post Current OutMemory of Inst.
-   * @param WorkSet WorkSet
-   */
-  void flowOut(
-      Instruction *Inst, Memory *Pre, Memory *Post, SetVector<Instruction *> &WorkSet);
+  // Flow OUT: merge Pre and Post, update OutMap + workset
+  void flowOut(llvm::Instruction *Inst,
+               OverflowMemory *Pre,
+               OverflowMemory *Post,
+               llvm::SetVector<llvm::Instruction *> &WorkSet);
 
-  /**
-   * Can the Instruction Inst incurr an integer overflow or underflow?
-   *
-   * @param Inst Instruction to check.
-   * @return true if the instruction can incur an integer overflow or underflow.
-   */
-  bool check(Instruction *Inst);
+  // Can Inst incur an integer overflow or underflow?
+  bool check(llvm::Instruction *Inst);
 
-  std::string getAnalysisName() {
-    return "Overflow";
-  }
+  std::string getAnalysisName() { return "Overflow"; }
 };
-}  // namespace dataflow
 
-#endif  // OVERFLOW_ANALYSIS_H
+} // namespace dataflow
+
+#endif // OVERFLOW_ANALYSIS_H

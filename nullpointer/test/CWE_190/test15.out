@@ -1,0 +1,12 @@
+Running Overflow on packet_get_int
+Potential Overflow Instructions by Overflow:
+Running Overflow on packet_get_string
+Potential Overflow Instructions by Overflow:
+Running Overflow on test_nresp_overflow_bad
+Potential Overflow Instructions by Overflow:
+  %mul = mul nsw i32 %call, 8
+  %inc = add nsw i32 %i.0, 1
+Running Overflow on main
+Potential Overflow Instructions by Overflow:
+  %mul = mul nsw i32 %call, 8
+  %inc = add nsw i32 %i.0, 1

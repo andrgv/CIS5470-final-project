@@ -41,6 +41,7 @@ else (USE_REFERENCE)
   # Overflow Analysis Pass
   add_llvm_library(OverflowPass MODULE
   src/OverflowAnalysis.cpp
+  src/DomainOverflow.cpp
   src/Transfer.cpp
   src/ChaoticIteration.cpp
   src/Domain.cpp
