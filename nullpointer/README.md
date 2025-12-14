@@ -71,10 +71,9 @@ nullpointer/
 ### Building the Project
 
 #### Build
+Open the project in the dev container
 
 ```bash
-# Open the project in the dev container
-
 # Create build directory and compile
 mkdir build
 cd build
@@ -226,7 +225,7 @@ Specific error lines can be marked:
 int x = INT_MAX;
 int y = x + 1;  // Error
 ```
-
+#### Null Pointer Dereference
 The interpretation for null pointer dereference output is similar. The end of the *.out files contains instructions that are identified to contain null pointer dereferences, and test cases are also annotated with the expected result.
 
 
