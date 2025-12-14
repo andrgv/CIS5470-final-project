@@ -272,6 +272,5 @@ Tests for null pointer dereference detection:
 ## References
 
 - [CWE-190: Integer Overflow](https://cwe.mitre.org/data/definitions/190.html)
-- [CWE-476: NULL Pointer Dereference](https://cwe.mitre.org/data/definitions/476.html)
 - LLVM Pass Documentation
-- Abstract Interpretation Theory
+- CIS 5470 labs 6 and 7 and slides
