@@ -201,7 +201,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=DivZeroAnalysis
+CMAKE_PROJECT_NAME:STATIC=NullPtrAnalysis
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -350,6 +350,18 @@ LLVM_USE_RELATIVE_PATHS_IN_FILES:BOOL=OFF
 
 //Value profile counters to use per site for IR PGO with Clang
 LLVM_VP_COUNTERS_PER_SITE:STRING=1.5
+
+//Value Computed by CMake
+NullPtrAnalysis_BINARY_DIR:STATIC=/nullpointer/build
+
+//Value Computed by CMake
+NullPtrAnalysis_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+NullPtrAnalysis_SOURCE_DIR:STATIC=/nullpointer
+
+//Dependencies for the target
+NullPtrPass_LIB_DEPENDS:STATIC=general;LLVM;
 
 //Dependencies for the target
 OverflowPass_LIB_DEPENDS:STATIC=general;LLVM;

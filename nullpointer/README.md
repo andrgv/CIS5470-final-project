@@ -1,6 +1,6 @@
 # CIS 5470 Final Project: Integer Overflow & Null Pointer Detection
 
-**Team Members:** Amand and Andrea
+**Team Members:** Amanda and Andrea
 
 ## Overview
 
@@ -100,7 +100,7 @@ nullpointer/
 
 ### Building the Project
 
-#### Option 1: Inside Docker Container (Recommended)
+#### Build
 
 ```bash
 # Enter the Docker container
@@ -117,16 +117,6 @@ make -j4
 
 # Verify build
 ls -lh OverflowPass.so NullPtrPass.so
-```
-
-#### Option 2: Local Build
-
-```bash
-cd /path/to/nullpointer
-mkdir -p build
-cd build
-cmake ..
-make -j4
 ```
 
 ### Build Outputs

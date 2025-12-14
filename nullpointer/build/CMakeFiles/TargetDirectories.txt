@@ -1,9 +1,9 @@
 /nullpointer/build/CMakeFiles/intrinsics_gen.dir
 /nullpointer/build/CMakeFiles/omp_gen.dir
 /nullpointer/build/CMakeFiles/acc_gen.dir
-/nullpointer/build/CMakeFiles/DivZeroPass.dir
-/nullpointer/build/CMakeFiles/install-DivZeroPass.dir
-/nullpointer/build/CMakeFiles/install-DivZeroPass-stripped.dir
+/nullpointer/build/CMakeFiles/NullPtrPass.dir
+/nullpointer/build/CMakeFiles/install-NullPtrPass.dir
+/nullpointer/build/CMakeFiles/install-NullPtrPass-stripped.dir
 /nullpointer/build/CMakeFiles/OverflowPass.dir
 /nullpointer/build/CMakeFiles/install-OverflowPass.dir
 /nullpointer/build/CMakeFiles/install-OverflowPass-stripped.dir

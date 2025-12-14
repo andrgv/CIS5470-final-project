@@ -30,7 +30,7 @@ bool NullPointerAnalysis::check(Instruction *Inst) {
   }
 
   // Retrieve the domain of the pointer
-  IntOverflowDomain *PtrDomain = getOrExtract(InMap[Inst], Ptr);
+  Domain *PtrDomain = getOrExtract(InMap[Inst], Ptr);
 
   // Error if the pointer is Null or MaybeNull
   return (Domain::equal(*PtrDomain, Domain::Null) || 

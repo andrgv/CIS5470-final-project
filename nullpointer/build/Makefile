@@ -87,7 +87,7 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target list_install_components
 list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"DivZeroPass\" \"OverflowPass\""
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"NullPtrPass\" \"OverflowPass\""
 .PHONY : list_install_components
 
 # Special rule for the target list_install_components
@@ -201,43 +201,43 @@ acc_gen/fast:
 .PHONY : acc_gen/fast
 
 #=============================================================================
-# Target rules for targets named DivZeroPass
+# Target rules for targets named NullPtrPass
 
 # Build rule for target.
-DivZeroPass: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 DivZeroPass
-.PHONY : DivZeroPass
+NullPtrPass: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 NullPtrPass
+.PHONY : NullPtrPass
 
 # fast build rule for target.
-DivZeroPass/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/build
-.PHONY : DivZeroPass/fast
+NullPtrPass/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/build
+.PHONY : NullPtrPass/fast
 
 #=============================================================================
-# Target rules for targets named install-DivZeroPass
+# Target rules for targets named install-NullPtrPass
 
 # Build rule for target.
-install-DivZeroPass: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 install-DivZeroPass
-.PHONY : install-DivZeroPass
+install-NullPtrPass: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 install-NullPtrPass
+.PHONY : install-NullPtrPass
 
 # fast build rule for target.
-install-DivZeroPass/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/install-DivZeroPass.dir/build.make CMakeFiles/install-DivZeroPass.dir/build
-.PHONY : install-DivZeroPass/fast
+install-NullPtrPass/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/install-NullPtrPass.dir/build.make CMakeFiles/install-NullPtrPass.dir/build
+.PHONY : install-NullPtrPass/fast
 
 #=============================================================================
-# Target rules for targets named install-DivZeroPass-stripped
+# Target rules for targets named install-NullPtrPass-stripped
 
 # Build rule for target.
-install-DivZeroPass-stripped: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 install-DivZeroPass-stripped
-.PHONY : install-DivZeroPass-stripped
+install-NullPtrPass-stripped: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 install-NullPtrPass-stripped
+.PHONY : install-NullPtrPass-stripped
 
 # fast build rule for target.
-install-DivZeroPass-stripped/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/install-DivZeroPass-stripped.dir/build.make CMakeFiles/install-DivZeroPass-stripped.dir/build
-.PHONY : install-DivZeroPass-stripped/fast
+install-NullPtrPass-stripped/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/install-NullPtrPass-stripped.dir/build.make CMakeFiles/install-NullPtrPass-stripped.dir/build
+.PHONY : install-NullPtrPass-stripped/fast
 
 #=============================================================================
 # Target rules for targets named OverflowPass
@@ -283,7 +283,7 @@ src/ChaoticIteration.o: src/ChaoticIteration.cpp.o
 
 # target to build an object file
 src/ChaoticIteration.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/ChaoticIteration.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/ChaoticIteration.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/ChaoticIteration.cpp.o
 .PHONY : src/ChaoticIteration.cpp.o
 
@@ -292,7 +292,7 @@ src/ChaoticIteration.i: src/ChaoticIteration.cpp.i
 
 # target to preprocess a source file
 src/ChaoticIteration.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/ChaoticIteration.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/ChaoticIteration.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/ChaoticIteration.cpp.i
 .PHONY : src/ChaoticIteration.cpp.i
 
@@ -301,40 +301,16 @@ src/ChaoticIteration.s: src/ChaoticIteration.cpp.s
 
 # target to generate assembly for a file
 src/ChaoticIteration.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/ChaoticIteration.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/ChaoticIteration.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/ChaoticIteration.cpp.s
 .PHONY : src/ChaoticIteration.cpp.s
-
-src/DivZeroAnalysis.o: src/DivZeroAnalysis.cpp.o
-.PHONY : src/DivZeroAnalysis.o
-
-# target to build an object file
-src/DivZeroAnalysis.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/DivZeroAnalysis.cpp.o
-.PHONY : src/DivZeroAnalysis.cpp.o
-
-src/DivZeroAnalysis.i: src/DivZeroAnalysis.cpp.i
-.PHONY : src/DivZeroAnalysis.i
-
-# target to preprocess a source file
-src/DivZeroAnalysis.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/DivZeroAnalysis.cpp.i
-.PHONY : src/DivZeroAnalysis.cpp.i
-
-src/DivZeroAnalysis.s: src/DivZeroAnalysis.cpp.s
-.PHONY : src/DivZeroAnalysis.s
-
-# target to generate assembly for a file
-src/DivZeroAnalysis.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/DivZeroAnalysis.cpp.s
-.PHONY : src/DivZeroAnalysis.cpp.s
 
 src/Domain.o: src/Domain.cpp.o
 .PHONY : src/Domain.o
 
 # target to build an object file
 src/Domain.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Domain.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Domain.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Domain.cpp.o
 .PHONY : src/Domain.cpp.o
 
@@ -343,7 +319,7 @@ src/Domain.i: src/Domain.cpp.i
 
 # target to preprocess a source file
 src/Domain.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Domain.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Domain.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Domain.cpp.i
 .PHONY : src/Domain.cpp.i
 
@@ -352,7 +328,7 @@ src/Domain.s: src/Domain.cpp.s
 
 # target to generate assembly for a file
 src/Domain.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Domain.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Domain.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Domain.cpp.s
 .PHONY : src/Domain.cpp.s
 
@@ -380,6 +356,30 @@ src/DomainOverflow.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/DomainOverflow.cpp.s
 .PHONY : src/DomainOverflow.cpp.s
 
+src/NullPointerAnalysis.o: src/NullPointerAnalysis.cpp.o
+.PHONY : src/NullPointerAnalysis.o
+
+# target to build an object file
+src/NullPointerAnalysis.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/NullPointerAnalysis.cpp.o
+.PHONY : src/NullPointerAnalysis.cpp.o
+
+src/NullPointerAnalysis.i: src/NullPointerAnalysis.cpp.i
+.PHONY : src/NullPointerAnalysis.i
+
+# target to preprocess a source file
+src/NullPointerAnalysis.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/NullPointerAnalysis.cpp.i
+.PHONY : src/NullPointerAnalysis.cpp.i
+
+src/NullPointerAnalysis.s: src/NullPointerAnalysis.cpp.s
+.PHONY : src/NullPointerAnalysis.s
+
+# target to generate assembly for a file
+src/NullPointerAnalysis.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/NullPointerAnalysis.cpp.s
+.PHONY : src/NullPointerAnalysis.cpp.s
+
 src/OverflowAnalysis.o: src/OverflowAnalysis.cpp.o
 .PHONY : src/OverflowAnalysis.o
 
@@ -404,12 +404,36 @@ src/OverflowAnalysis.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/OverflowAnalysis.cpp.s
 .PHONY : src/OverflowAnalysis.cpp.s
 
+src/PointerAnalysis.o: src/PointerAnalysis.cpp.o
+.PHONY : src/PointerAnalysis.o
+
+# target to build an object file
+src/PointerAnalysis.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/PointerAnalysis.cpp.o
+.PHONY : src/PointerAnalysis.cpp.o
+
+src/PointerAnalysis.i: src/PointerAnalysis.cpp.i
+.PHONY : src/PointerAnalysis.i
+
+# target to preprocess a source file
+src/PointerAnalysis.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/PointerAnalysis.cpp.i
+.PHONY : src/PointerAnalysis.cpp.i
+
+src/PointerAnalysis.s: src/PointerAnalysis.cpp.s
+.PHONY : src/PointerAnalysis.s
+
+# target to generate assembly for a file
+src/PointerAnalysis.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/PointerAnalysis.cpp.s
+.PHONY : src/PointerAnalysis.cpp.s
+
 src/Transfer.o: src/Transfer.cpp.o
 .PHONY : src/Transfer.o
 
 # target to build an object file
 src/Transfer.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Transfer.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Transfer.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Transfer.cpp.o
 .PHONY : src/Transfer.cpp.o
 
@@ -418,7 +442,7 @@ src/Transfer.i: src/Transfer.cpp.i
 
 # target to preprocess a source file
 src/Transfer.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Transfer.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Transfer.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Transfer.cpp.i
 .PHONY : src/Transfer.cpp.i
 
@@ -427,7 +451,7 @@ src/Transfer.s: src/Transfer.cpp.s
 
 # target to generate assembly for a file
 src/Transfer.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Transfer.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Transfer.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Transfer.cpp.s
 .PHONY : src/Transfer.cpp.s
 
@@ -436,7 +460,7 @@ src/Utils.o: src/Utils.cpp.o
 
 # target to build an object file
 src/Utils.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Utils.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Utils.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Utils.cpp.o
 .PHONY : src/Utils.cpp.o
 
@@ -445,7 +469,7 @@ src/Utils.i: src/Utils.cpp.i
 
 # target to preprocess a source file
 src/Utils.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Utils.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Utils.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Utils.cpp.i
 .PHONY : src/Utils.cpp.i
 
@@ -454,7 +478,7 @@ src/Utils.s: src/Utils.cpp.s
 
 # target to generate assembly for a file
 src/Utils.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DivZeroPass.dir/build.make CMakeFiles/DivZeroPass.dir/src/Utils.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/NullPtrPass.dir/build.make CMakeFiles/NullPtrPass.dir/src/Utils.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OverflowPass.dir/build.make CMakeFiles/OverflowPass.dir/src/Utils.cpp.s
 .PHONY : src/Utils.cpp.s
 
@@ -471,29 +495,32 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... acc_gen"
-	@echo "... install-DivZeroPass"
-	@echo "... install-DivZeroPass-stripped"
+	@echo "... install-NullPtrPass"
+	@echo "... install-NullPtrPass-stripped"
 	@echo "... install-OverflowPass"
 	@echo "... install-OverflowPass-stripped"
 	@echo "... intrinsics_gen"
 	@echo "... omp_gen"
-	@echo "... DivZeroPass"
+	@echo "... NullPtrPass"
 	@echo "... OverflowPass"
 	@echo "... src/ChaoticIteration.o"
 	@echo "... src/ChaoticIteration.i"
 	@echo "... src/ChaoticIteration.s"
-	@echo "... src/DivZeroAnalysis.o"
-	@echo "... src/DivZeroAnalysis.i"
-	@echo "... src/DivZeroAnalysis.s"
 	@echo "... src/Domain.o"
 	@echo "... src/Domain.i"
 	@echo "... src/Domain.s"
 	@echo "... src/DomainOverflow.o"
 	@echo "... src/DomainOverflow.i"
 	@echo "... src/DomainOverflow.s"
+	@echo "... src/NullPointerAnalysis.o"
+	@echo "... src/NullPointerAnalysis.i"
+	@echo "... src/NullPointerAnalysis.s"
 	@echo "... src/OverflowAnalysis.o"
 	@echo "... src/OverflowAnalysis.i"
 	@echo "... src/OverflowAnalysis.s"
+	@echo "... src/PointerAnalysis.o"
+	@echo "... src/PointerAnalysis.i"
+	@echo "... src/PointerAnalysis.s"
 	@echo "... src/Transfer.o"
 	@echo "... src/Transfer.i"
 	@echo "... src/Transfer.s"
