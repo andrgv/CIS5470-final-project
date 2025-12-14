@@ -210,7 +210,3 @@ Calculate metrics for specific test directories only.
 5. Investigate failures using detailed output
 6. Iterate on improvements
 
-## See Also
-
-- `TESTING_GUIDE.md`: General testing documentation
-- `doc/project_proposal.md`: Project overview and goals

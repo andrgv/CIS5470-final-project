@@ -1,3 +1,0 @@
-Running Overflow on main
-Potential Overflow Instructions by Overflow:
-  %dec = add i8 -1, -1
