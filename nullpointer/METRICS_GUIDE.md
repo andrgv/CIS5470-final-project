@@ -200,13 +200,6 @@ Calculate metrics for specific test directories only.
 - Analysis needs significant improvement
 - Check transfer functions and domain implementation
 
-## Best Practices
-
-1. **Run metrics after every change** to track improvement
-2. **Focus on F1 score** for overall effectiveness
-3. **Investigate false negatives** to understand what's being missed
-4. **Review false positives** to reduce false alarms
-5. **Annotate all test files** properly for accurate metrics
 
 ## Integration with Development Workflow
 
@@ -217,32 +210,7 @@ Calculate metrics for specific test directories only.
 5. Investigate failures using detailed output
 6. Iterate on improvements
 
-## Troubleshooting
-
-### No metrics calculated
-- Ensure tests have been run first (.out files exist)
-- Check test files have proper annotations
-
-### All zeros in metrics
-- Verify ground truth annotations are present
-- Check .out files contain overflow detection results
-
-### Unexpected results
-- Review test annotations for correctness
-- Examine .out files to see what was actually detected
-- Use `--verbose` flag for detailed breakdown
-
-## Files and Directories
-
-- `calculate_metrics.py`: Main metrics calculation script
-- `test/int_over_under_flow/`: Basic overflow/underflow tests
-- `test/CWE_190/`: CWE-190 standard test cases
-- `test/more_data_types/`: Tests for various data types
-- `*.out`: Overflow detection results
-- `*.err`: Detailed dataflow analysis output
-
 ## See Also
 
 - `TESTING_GUIDE.md`: General testing documentation
-- `QUICKSTART.md`: Project quick start guide
 - `doc/project_proposal.md`: Project overview and goals
