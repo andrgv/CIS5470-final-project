@@ -36,6 +36,8 @@ public:
   // Lattice operations
   static DomainOverflow join(const DomainOverflow &A,
                              const DomainOverflow &B);
+  static DomainOverflow widen(const DomainOverflow &Old,
+                              const DomainOverflow &New);
   static bool equal(const DomainOverflow &A,
                     const DomainOverflow &B);
 

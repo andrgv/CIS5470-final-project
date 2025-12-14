@@ -13,6 +13,36 @@ namespace dataflow {
 std::vector<Instruction *> getPredecessors(Instruction *Inst);
 std::vector<Instruction *> getSuccessors(Instruction *Inst);
 
+// Simple loop header detection: check if a PHI node has a back edge
+// A back edge exists if a predecessor block can reach the PHI's block
+static bool isLoopHeader(PHINode *PN) {
+  if (!PN) return false;
+
+  BasicBlock *PhiBB = PN->getParent();
+
+  // Check if any predecessor is a back edge (comes from a block that
+  // the PHI's block can reach - indicating a loop)
+  for (unsigned i = 0; i < PN->getNumIncomingValues(); ++i) {
+    BasicBlock *PredBB = PN->getIncomingBlock(i);
+
+    // Simple heuristic: if predecessor is a successor of the PHI's block
+    // in the CFG, it's likely a back edge
+    for (auto *Succ : successors(PhiBB)) {
+      if (Succ == PredBB) {
+        return true; // Back edge detected
+      }
+      // Also check one level deeper for loops
+      for (auto *Succ2 : successors(Succ)) {
+        if (Succ2 == PredBB) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 // ===----------------------------------------------------------------------===//
 // Local helpers (overflow-specific)
 // ===----------------------------------------------------------------------===//
@@ -48,7 +78,7 @@ DomainOverflow getOrExtractOverflow(const OverflowMemory &Mem,
       uint64_t uval = CI->getZExtValue();
       long long uval_signed = (long long)uval;
 
-      // Return interval that covers both interpretations
+      // return interval that covers both signed/unsigned interpretations
       long long low = std::min(sval, uval_signed);
       long long high = std::max(sval, uval_signed);
       return DomainOverflow(low, high);
@@ -169,8 +199,21 @@ void OverflowAnalysis::transfer(Instruction *I,
       }
     }
 
-    if (!first) // had at least one incoming value
-      NOut[variable(I)] = Acc;
+    if (!first) { // had at least one incoming value
+      std::string var = variable(I);
+
+      // Apply widening at loop headers for faster convergence
+      if (isLoopHeader(PN)) {
+        // Check if we have an old value for this PHI
+        auto OldIt = In->find(var);
+        if (OldIt != In->end()) {
+          // Apply widening operator: compare old vs new interval
+          Acc = DomainOverflow::widen(OldIt->second, Acc);
+        }
+      }
+
+      NOut[var] = Acc;
+    }
 
     return;
   }

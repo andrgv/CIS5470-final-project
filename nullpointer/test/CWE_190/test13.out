@@ -1,4 +1,6 @@
 Running Overflow on test_alloc_overflow_bad
 Potential Overflow Instructions by Overflow:
+  %mul = mul nsw i32 10240, 209716
 Running Overflow on main
 Potential Overflow Instructions by Overflow:
+  %mul = mul nsw i32 10240, 209716

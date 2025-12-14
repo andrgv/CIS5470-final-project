@@ -8,9 +8,9 @@ target triple = "x86_64-pc-linux-gnu"
 ; Function Attrs: noinline nounwind uwtable
 define dso_local void @test_alloc_overflow_bad() #0 {
 entry:
-  %conv = sext i32 209716 to i64
-  %mul = mul i64 10240, %conv
-  %call = call noalias i8* @malloc(i64 noundef %mul) #2
+  %mul = mul nsw i32 10240, 209716
+  %conv = sext i32 %mul to i64
+  %call = call noalias i8* @malloc(i64 noundef %conv) #2
   %0 = bitcast i8* %call to %struct.img_t*
   %tobool = icmp ne %struct.img_t* %0, null
   br i1 %tobool, label %if.then, label %if.end

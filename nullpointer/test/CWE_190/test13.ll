@@ -10,29 +10,32 @@ define dso_local void @test_alloc_overflow_bad() #0 {
 entry:
   %num_imgs = alloca i32, align 4
   %table_ptr = alloca %struct.img_t*, align 8
+  %alloc_size = alloca i32, align 4
   store i32 209716, i32* %num_imgs, align 4
   %0 = load i32, i32* %num_imgs, align 4
-  %conv = sext i32 %0 to i64
-  %mul = mul i64 10240, %conv
-  %call = call noalias i8* @malloc(i64 noundef %mul) #2
-  %1 = bitcast i8* %call to %struct.img_t*
-  store %struct.img_t* %1, %struct.img_t** %table_ptr, align 8
-  %2 = load %struct.img_t*, %struct.img_t** %table_ptr, align 8
-  %tobool = icmp ne %struct.img_t* %2, null
+  %mul = mul nsw i32 10240, %0
+  store i32 %mul, i32* %alloc_size, align 4
+  %1 = load i32, i32* %alloc_size, align 4
+  %conv = sext i32 %1 to i64
+  %call = call noalias i8* @malloc(i64 noundef %conv) #2
+  %2 = bitcast i8* %call to %struct.img_t*
+  store %struct.img_t* %2, %struct.img_t** %table_ptr, align 8
+  %3 = load %struct.img_t*, %struct.img_t** %table_ptr, align 8
+  %tobool = icmp ne %struct.img_t* %3, null
   br i1 %tobool, label %if.then, label %if.end
 
 if.then:                                          ; preds = %entry
-  %3 = load %struct.img_t*, %struct.img_t** %table_ptr, align 8
-  %arrayidx = getelementptr inbounds %struct.img_t, %struct.img_t* %3, i64 0
+  %4 = load %struct.img_t*, %struct.img_t** %table_ptr, align 8
+  %arrayidx = getelementptr inbounds %struct.img_t, %struct.img_t* %4, i64 0
   %data = getelementptr inbounds %struct.img_t, %struct.img_t* %arrayidx, i32 0, i32 0
   %arrayidx1 = getelementptr inbounds [10240 x i8], [10240 x i8]* %data, i64 0, i64 0
   store i8 42, i8* %arrayidx1, align 1
   br label %if.end
 
 if.end:                                           ; preds = %if.then, %entry
-  %4 = load %struct.img_t*, %struct.img_t** %table_ptr, align 8
-  %5 = bitcast %struct.img_t* %4 to i8*
-  call void @free(i8* noundef %5) #2
+  %5 = load %struct.img_t*, %struct.img_t** %table_ptr, align 8
+  %6 = bitcast %struct.img_t* %5 to i8*
+  call void @free(i8* noundef %6) #2
   ret void
 }
 

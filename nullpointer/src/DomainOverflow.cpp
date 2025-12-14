@@ -137,6 +137,21 @@ DomainOverflow DomainOverflow::join(const DomainOverflow &A,
   return DomainOverflow(l, h);
 }
 
+DomainOverflow DomainOverflow::widen(const DomainOverflow &Old,
+                                     const DomainOverflow &New) {
+  // Widening operator: forces convergence by jumping to infinity
+  // when bounds keep growing
+
+  if (Old.isBottom) return New;
+  if (New.isBottom) return Old;
+
+  // If the new interval is wider than the old one, jump to infinity
+  long long l = (New.low < Old.low) ? NEG_INF : Old.low;
+  long long h = (New.high > Old.high) ? POS_INF : Old.high;
+
+  return DomainOverflow(l, h);
+}
+
 bool DomainOverflow::equal(const DomainOverflow &A,
                            const DomainOverflow &B) {
   if (A.isBottom != B.isBottom)

@@ -1,15 +1,14 @@
-// EXPECT: OVERFLOW
+// Expect: Overflow
 #include <stdlib.h>
 #include <limits.h>
 
 int packet_get_int(void) {
-    // Return a large value that will overflow when multiplied by sizeof(char*)
+    // large value that will overflow when multiplied by sizeof(char*)
     return INT_MAX / (int)sizeof(char *) + 1;
 }
 
 char *packet_get_string(void) {
-    // Dummy function
-    return "dummy";
+    return "hello";
 }
 
 void test_nresp_overflow_bad(void) {
