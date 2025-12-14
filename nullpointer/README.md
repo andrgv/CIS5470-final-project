@@ -18,8 +18,6 @@ nullpointer/
 ├── CMakeLists.txt              # CMake build configuration
 ├── Makefile                    # Top-level build commands
 ├── README.md                   # This file
-├── QUICKSTART.md              # Quick start guide for running tests
-├── TESTING_GUIDE.md           # Detailed testing documentation
 ├── METRICS_GUIDE.md           # Precision & Recall metrics guide
 │
 ├── include/                    # Header files
@@ -44,8 +42,8 @@ nullpointer/
 │   ├── int_over_under_flow/   # Basic overflow tests (6 tests)
 │   ├── CWE_190/               # CWE-190 real-world tests (6+ tests)
 │   ├── more_data_types/       # Complex data type tests (~10 tests)
-│   └── nullpointer/           # Null pointer tests (~18 tests)
-│       └── aliasing/          # Pointer aliasing tests
+│   └── nullpointer/           # Null pointer tests (20 tests)
+│       └── aliasing/          # Pointer aliasing tests (10 tests)
 │
 ├── doc/                        # Documentation
 │   └── project_proposal.md    # Original project proposal
@@ -75,17 +73,13 @@ nullpointer/
 #### Build
 
 ```bash
-# Enter the Docker container
-docker exec -it great_williams zsh
-
-# Navigate to project directory
-cd /nullpointer
+# Open the project in the dev container
 
 # Create build directory and compile
-mkdir -p build
+mkdir build
 cd build
 cmake ..
-make -j4
+make
 
 # Verify build
 ls -lh OverflowPass.so NullPtrPass.so
@@ -95,7 +89,7 @@ ls -lh OverflowPass.so NullPtrPass.so
 
 After successful build, you should see:
 - `build/OverflowPass.so` - Integer overflow detection pass
-- `build/NullPtrPass.so` - Null pointer detection pass (if built)
+- `build/NullPtrPass.so` - Null pointer detection pass
 
 ## Running the Analyses
 
@@ -104,7 +98,6 @@ After successful build, you should see:
 Run all overflow tests with automatic metrics:
 
 ```bash
-cd /nullpointer
 ./run_overflow_tests.sh
 ```
 
@@ -113,24 +106,22 @@ This will:
 2. Display results with color-coded output
 3. Automatically calculate and show precision/recall metrics
 
-### Manual Testing - Single File
-
+To run null pointer dereference non-aliasing tests:
 ```bash
-# Navigate to test directory
-cd /nullpointer/test/int_over_under_flow
-
-# Compile C to LLVM IR
-clang -emit-llvm -S -fno-discard-value-names -Xclang -disable-O0-optnone -c -o test01.ll test01.c
-
-# Run mem2reg optimization
-opt -mem2reg -S test01.ll -o test01.opt.ll
-
-# Run overflow analysis
-opt -load-pass-plugin ../../build/OverflowPass.so -passes=Overflow test01.opt.ll -disable-output
-
-# View optimized IR (optional)
-cat test01.opt.ll
+cd /test/nullpointer
+./run_tests.sh
 ```
+
+To run null pointer dereference aliasing tests:
+```bash
+cd /test/nullpointer/aliasing
+./run_tests.sh
+```
+
+The script displays a table with the expected result, the analysis-reported
+result, and whether the analysis's result is correct. It also displays the
+precision, recall, and F1 metrics and the number of true/false positives
+and true/false negatives.
 
 ### Using Makefiles
 
@@ -236,6 +227,8 @@ int x = INT_MAX;
 int y = x + 1;  // Error
 ```
 
+The interpretation for null pointer dereference output is similar. The end of the *.out files contains instructions that are identified to contain null pointer dereferences, and test cases are also annotated with the expected result.
+
 
 ## Test Suites
 
@@ -270,17 +263,11 @@ Tests with various data types and scenarios:
 ### 4. nullpointer/ - Null Pointer Tests
 
 Tests for null pointer dereference detection:
-- Basic null pointer tests (`test01.c` - `test18.c`)
+- Basic null pointer tests (`test01.c` - `test20.c`)
 - `aliasing/` - Pointer aliasing scenarios
 
 **Purpose:** Validate null pointer analysis
 
-## Documentation
-
-- **QUICKSTART.md** - Quick start guide with TL;DR commands
-- **TESTING_GUIDE.md** - Comprehensive testing documentation
-- **METRICS_GUIDE.md** - Detailed precision/recall metrics guide
-- **doc/project_proposal.md** - Original project proposal with goals
 
 ## References
 
@@ -288,7 +275,3 @@ Tests for null pointer dereference detection:
 - [CWE-476: NULL Pointer Dereference](https://cwe.mitre.org/data/definitions/476.html)
 - LLVM Pass Documentation
 - Abstract Interpretation Theory
-
----
-
-For quick testing: `./test_menu.sh` and select option 1!
