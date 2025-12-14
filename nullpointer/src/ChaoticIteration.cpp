@@ -98,28 +98,151 @@ Memory *join(Memory *Mem1, Memory *Mem2) {
   return Result;
 }
 
-void NullPointerAnalysis::flowIn(Instruction *Inst, Memory *InMem) {
-  /**
-   * TODO: Write your code to implement flowIn.
-   *
-   * For each predecessor Pred of instruction Inst, do the following:
-   *   + Get the Out Memory of Pred using OutMap.
-   *   + Join the Out Memory with InMem.
-   */
+// Helper to deep copy a Memory map
+Memory* cloneMemory(const Memory* Src) {
+    Memory* Dst = new Memory();
+    for (auto const& [Key, Val] : *Src) {
+        (*Dst)[Key] = new Domain(*Val);
+    }
+    return Dst;
+}
+
+/** Refines domain based on condition. Returns false if branch is unreachable. */
+bool refine(Memory* Mem, Value* Cond, bool isTrueBranch) {
+    auto* Cmp = dyn_cast<ICmpInst>(Cond);
+    if (!Cmp) return true; 
+
+    Value* Op0 = Cmp->getOperand(0);
+    Value* Op1 = Cmp->getOperand(1);
+    auto Pred = Cmp->getPredicate();
+
+    // Make sure Op1 is the NULL
+    if (isa<ConstantPointerNull>(Op0)) {
+        std::swap(Op0, Op1);
+        Pred = Cmp->getSwappedPredicate();
+    }
+
+    if (!isa<ConstantPointerNull>(Op1)) return true;
+
+    // Determine Required Domain
+    Domain::Element Required;
+    if (Pred == CmpInst::ICMP_EQ) {
+        Required = isTrueBranch ? Domain::Null : Domain::NonNull;
+    } else if (Pred == CmpInst::ICMP_NE) {
+        Required = isTrueBranch ? Domain::NonNull : Domain::Null;
+    } else {
+        return true; 
+    }
+
+    // Function to update a variable in memory
+    auto updateMemory = [&](std::string Name) -> bool {
+        if (Mem->count(Name)) {
+            Domain* Current = (*Mem)[Name];
+            if (Current->Value == Domain::MaybeNull) {
+                // Refine MaybeNull -> Required domain
+                delete Current;
+                (*Mem)[Name] = new Domain(Required);
+            } 
+            else if (Current->Value != Required) {
+                // Contradiction
+                return false;
+            }
+        } else {
+            // If not in map, assume it was unknown/uninit, set to Required
+            (*Mem)[Name] = new Domain(Required);
+        }
+        return true;
+    };
+
+    // Refine the operand
+    if (!updateMemory(variable(Op0))) return false;
+
+    // If Op0 is a load, also refine the source memory variable
+    if (auto *Load = dyn_cast<LoadInst>(Op0)) {
+        Value *SourcePtr = Load->getPointerOperand()->stripPointerCasts();
+        
+        if (isa<AllocaInst>(SourcePtr)) {
+            if (!updateMemory(variable(SourcePtr))) return false;
+        }
+    }
+
+    return true;
+}
+
+bool NullPointerAnalysis::flowIn(Instruction *Inst, Memory *InMem) {
   std::vector<Instruction *> Preds = getPredecessors(Inst);
 
-  for (Instruction *Pred : Preds) {
-    auto PredOutIt = OutMap.find(Pred);
-
-    Memory *PredOut = PredOutIt->second;
-    Memory *Joined = join(InMem, PredOut);
-
-    // Update InMem with joined result
-    for (auto &[key, val] : *Joined) {
-      (*InMem)[key] = new Domain(*val);
+  if (Inst == &(Inst->getFunction()->getEntryBlock().front())) {
+    for (Argument &Arg : Inst->getFunction()->args()) {
+      // Assume arguments can be any value, so they are MaybeNull.
+      (*InMem)[variable(&Arg)] = new Domain(Domain::MaybeNull);
     }
-    delete Joined;
+    return true;
   }
+
+  bool atLeastOnePath = false; // Track if we found a valid path
+  bool firstMerge = true;
+
+  for (Instruction *Pred : Preds) {
+    if (OutMap.find(Pred) == OutMap.end()) continue;
+
+    Memory *PredOut = OutMap[Pred];
+    Memory *EdgeMem = cloneMemory(PredOut); // Work on a copy
+    bool isFeasible = true;
+
+    // errs() << "\n[FlowIn] Processing Edge: " << variable(Pred) << " -> " << variable(Inst) << "\n";
+
+    // Check if the predecessor is a conditional branch
+    if (auto *Branch = dyn_cast<BranchInst>(Pred)) {
+      if (Branch->isConditional()) {
+        Value *Cond = Branch->getCondition();
+        BasicBlock *CurrentBlock = Inst->getParent();
+
+        // Check True Edge
+        if (Branch->getSuccessor(0) == CurrentBlock) {
+           if (!refine(EdgeMem, Cond, true)) {
+               isFeasible = false;
+           }
+        }
+        // Check False Edge
+        else if (Branch->getSuccessor(1) == CurrentBlock) {
+           if (!refine(EdgeMem, Cond, false)) {
+               isFeasible = false;
+           }
+        }
+      }
+    }
+
+    // Only join if the path is feasible
+    if (isFeasible) {
+        atLeastOnePath = true;
+        if (firstMerge) {
+            // Copy EdgeMem to InMem directly for the first valid predecessor
+            for (auto const& [Key, Val] : *EdgeMem) {
+                (*InMem)[Key] = new Domain(*Val);
+            }
+            firstMerge = false;
+        } else {
+            // Join with accumulated InMem
+            Memory *Joined = join(InMem, EdgeMem);
+            
+            for (auto &pair : *InMem) delete pair.second;
+            InMem->clear();
+
+            // Update InMem
+            for (auto const& [Key, Val] : *Joined) {
+                (*InMem)[Key] = new Domain(*Val);
+            }
+            delete Joined;
+        }
+    }
+
+    // Clean up the temporary edge memory
+    for (auto &pair : *EdgeMem) delete pair.second;
+    delete EdgeMem;
+  }
+
+  return atLeastOnePath;
 }
 
 /**
@@ -250,11 +373,21 @@ void NullPointerAnalysis::doAnalysis(Function &F, PointerAnalysis *PA) {
 
     Memory *InMem = new Memory();
 
-    flowIn(Inst, InMem);
+    bool isReachable = flowIn(Inst, InMem);
     InMap[Inst] = InMem;
     // errs() << "InMap after flowIn for: " << *Inst << "\n";
     // InMap[Inst] = new Memory(InMem);
 
+    if (!isReachable) {
+      Memory *OldOut = OutMap[Inst];
+      if (!OldOut->empty()) {
+          OldOut->clear(); // Set to Bottom
+          for (Instruction *Succ : getSuccessors(Inst)) {
+              WorkSet.insert(Succ);
+          }
+      }
+      continue;
+    }
     Memory *Out = new Memory();
 
     // Copy InMem into Out

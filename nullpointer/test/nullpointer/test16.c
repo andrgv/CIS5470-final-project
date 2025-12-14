@@ -6,7 +6,7 @@ int* safe() {
     return p;
 }
 
-int f() {
+int main() {
     int* p = safe();
     return *p; // safe
 }
