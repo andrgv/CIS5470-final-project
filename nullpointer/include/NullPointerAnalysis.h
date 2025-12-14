@@ -61,7 +61,7 @@ struct NullPointerAnalysis : public llvm::PassInfoMixin<NullPointerAnalysis> {
    * @param Inst Instruction to flow In Memory for.
    * @param InMem InMemory object of Inst to populate.
    */
-  void flowIn(Instruction *Inst, Memory *InMem);
+  bool flowIn(Instruction *Inst, Memory *InMem);
 
   /**
    * @brief Merge the previous Out Memory of Inst with the current Out Memory

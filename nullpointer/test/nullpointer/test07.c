@@ -6,5 +6,5 @@ int f() {
   if (x != 0) {
     p = NULL;  // unreachable
   }
-  return *p;
-} // doesn't work
+  return *p; // safe
+} 
