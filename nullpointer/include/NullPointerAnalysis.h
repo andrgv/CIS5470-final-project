@@ -2,6 +2,7 @@
 #define NULL_POINTER_ANALYSIS_H
 
 #include "Domain.h"
+#include "PointerAnalysis.h"
 #include "llvm/ADT/SetVector.h"
 #include "llvm/IR/CFG.h"
 #include "llvm/IR/Function.h"
@@ -39,7 +40,11 @@ struct NullPointerAnalysis : public llvm::PassInfoMixin<NullPointerAnalysis> {
    * This function creates a transfer function that updates the Out Memory based
    * on In Memory and the instruction type/parameters.
    */
-  void transfer(Instruction *I, const Memory *In, Memory &NOut);
+  void transfer(Instruction *I,
+      const Memory *In,
+      Memory &NOut,
+      PointerAnalysis *PA,
+      SetVector<Value *> PointerSet);
 
   /**
    * @brief This function implements the chaotic iteration algorithm using
@@ -47,7 +52,7 @@ struct NullPointerAnalysis : public llvm::PassInfoMixin<NullPointerAnalysis> {
    *
    * @param F The function to be analyzed.
    */
-  void doAnalysis(Function &F);
+  void doAnalysis(Function &F, PointerAnalysis *PA);
 
   /**
    * @brief Flow the abstract domains from all predecessors of Inst into the In
@@ -79,7 +84,7 @@ struct NullPointerAnalysis : public llvm::PassInfoMixin<NullPointerAnalysis> {
   bool check(Instruction *Inst);
 
   std::string getAnalysisName() {
-    return "NullPointer";
+    return "NullPtr";
   }
 };
 }  // namespace dataflow

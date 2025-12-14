@@ -1,6 +1,6 @@
 #include "Utils.h"
 
-#include "DivZeroAnalysis.h"
+#include "NullPointerAnalysis.h"
 #include "Domain.h"
 
 const char *WHITESPACES = " \t\n\r";
@@ -36,15 +36,17 @@ std::string variable(const Value *Val) {
 }
 
 Domain::Element extractFromValue(const Value *Val) {
-  if (isa<UndefValue>(Val)) {
-    return Domain::MaybeZero;
+  // if (isa<UndefValue>(Val)) {
+  //   return Domain::MaybeZero;
 
-  } else if (isa<ConstantPointerNull>(Val)) {
+  // } else 
+  if (isa<ConstantPointerNull>(Val)) {
     return Domain::Null;
 
-  } else if (auto *ConstVal = dyn_cast<ConstantData>(Val)) {
-    return (ConstVal->isZeroValue() ? Domain::Zero : Domain::NonZero);
-  }
+  } 
+  // else if (auto *ConstVal = dyn_cast<ConstantData>(Val)) {
+  //   return (ConstVal->isZeroValue() ? Domain::Zero : Domain::NonZero);
+  // }
 
   return Domain::Uninit;
 }
@@ -87,5 +89,15 @@ void printMap(Function &F,
     errs() << "\n";
   }
 }
+
+std::string address(const Value *Val) {
+  std::string Code;
+  raw_string_ostream SS(Code);
+  Val->print(SS);
+  Code.erase(0, Code.find_first_not_of(WHITESPACES));
+  Code = "@(" + Code + ")";
+  return Code;
+}
+
 
 }  // namespace dataflow

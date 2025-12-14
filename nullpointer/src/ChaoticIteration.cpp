@@ -1,5 +1,4 @@
-#include "DivZeroAnalysis.h"
-#include "OverflowAnalysis.h"
+#include "NullPointerAnalysis.h"
 #include "Utils.h"
 
 namespace dataflow {
@@ -99,7 +98,7 @@ Memory *join(Memory *Mem1, Memory *Mem2) {
   return Result;
 }
 
-void DivZeroAnalysis::flowIn(Instruction *Inst, Memory *InMem) {
+void NullPointerAnalysis::flowIn(Instruction *Inst, Memory *InMem) {
   /**
    * TODO: Write your code to implement flowIn.
    *
@@ -175,7 +174,7 @@ bool equal(Memory *Mem1, Memory *Mem2) {
   return true;
 }
 
-void DivZeroAnalysis::flowOut(
+void NullPointerAnalysis::flowOut(
     Instruction *Inst, Memory *Pre, Memory *Post, SetVector<Instruction *> &WorkSet) {
   /**
    * TODO: Write your code to implement flowOut.
@@ -193,8 +192,9 @@ void DivZeroAnalysis::flowOut(
 
 }
 
-void DivZeroAnalysis::doAnalysis(Function &F) {
+void NullPointerAnalysis::doAnalysis(Function &F, PointerAnalysis *PA) {
   SetVector<Instruction *> WorkSet;
+  SetVector<Value *> PointerSet;
   /**
    * TODO: Write your code to implement the chaotic iteration algorithm
    * for the analysis.
@@ -209,6 +209,34 @@ void DivZeroAnalysis::doAnalysis(Function &F) {
    *   memory, to check if there is a difference between the two to update the
    *   OutMap and add all successors to WorkSet.
    */
+
+  // Initialize PointerSet with all pointer-type values
+  for (Instruction &I : instructions(F)) {
+    if (I.getType()->isPointerTy()) {
+     PointerSet.insert(&I);
+   }
+    // Also include operands that are pointers
+    for (Use &U : I.operands()) {
+      if (U->getType()->isPointerTy()) {
+        PointerSet.insert(U.get());
+     }
+    }
+  }
+
+  // Create initial memory for entry instruction
+  Memory *EntryMem = new Memory();
+  for (Argument &Arg : F.args()) {
+    std::string Var = variable(&Arg);
+    if (Arg.getType()->isIntegerTy()) {
+      (*EntryMem)[Var] = new Domain(Domain::MaybeNull);
+    } else if (Arg.getType()->isPointerTy()) {
+      PointerSet.insert(&Arg);
+    }
+  }
+
+  // Associate this memory with the first instruction of the entry block
+  Instruction *FirstInst = &*F.getEntryBlock().begin();
+  InMap[FirstInst] = EntryMem;
 
   // Initialize workset
   for (Instruction &I : instructions(F)) {
@@ -234,7 +262,7 @@ void DivZeroAnalysis::doAnalysis(Function &F) {
       (*Out)[key] = new Domain(*val);
     }
 
-    DivZeroAnalysis::transfer(Inst, InMem, *Out);
+    NullPointerAnalysis::transfer(Inst, InMem, *Out, PA, PointerSet);
     // printInstructionTransfer(Inst, InMem, Out);
     flowOut(Inst, OutMap[Inst], Out, WorkSet);
 

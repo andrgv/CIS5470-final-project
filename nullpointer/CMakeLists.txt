@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(DivZeroAnalysis)
+project(NullPtrAnalysis)
 
 find_package(LLVM 14 REQUIRED CONFIG)
 list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
@@ -21,21 +21,22 @@ if (USE_REFERENCE)
 
   message(STATUS "Use reference solution")
   add_llvm_library(DivZeroPass MODULE
-    src/DivZeroAnalysis.cpp
     src/Transfer.cpp
     src/Domain.cpp
     src/Utils.cpp
+    src/NullPointerAnalysis.cpp
   )
 
   target_link_libraries(DivZeroPass PRIVATE HiddenAnalysis)
 
 else (USE_REFERENCE)
-  add_llvm_library(DivZeroPass MODULE # for creating libHiddenAnalysis.a: 1) change MODULE to OBJECT; 2) change DivZeroPass to HiddenAnalysis.
-  src/DivZeroAnalysis.cpp
+  add_llvm_library(NullPtrPass MODULE # for creating libHiddenAnalysis.a: 1) change MODULE to OBJECT; 2) change DivZeroPass to HiddenAnalysis.
+  src/PointerAnalysis.cpp
   src/Transfer.cpp
   src/ChaoticIteration.cpp
   src/Domain.cpp
   src/Utils.cpp
+  src/NullPointerAnalysis.cpp
   )
 
   # Overflow Analysis Pass
